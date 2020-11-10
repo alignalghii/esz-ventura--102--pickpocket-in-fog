@@ -1,0 +1,7 @@
+_minted-*
+*.aux
+*.log
+*.toc
+*.dvi
+*.pdf
+*.eps

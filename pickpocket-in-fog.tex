@@ -1,0 +1,180 @@
+\documentclass{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage{t1enc}
+\usepackage[magyar]{babel}
+\sloppy
+
+\usepackage{amsmath}
+\usepackage{comment}
+
+\usepackage{minted}
+\usepackage{graphicx}
+\usepackage{caption}
+
+\usepackage{amsthm}
+\usepackage{amssymb}
+\newtheorem{task}{feladat}
+\newtheorem{lemm}{segédtétel}
+\newtheorem{theorem}{tétel}
+\newtheorem{answer}{válasz}
+\renewcommand{\qedsymbol}{$\blacksquare$}
+
+\newcommand{\parenthesed}[1]{\left(#1\right)}
+\newcommand{\expvalnet}{E_{\text{netto}}}
+\newcommand{\expvalgro}{E_{\text{brutto}}}
+
+\author{Endrey Márk}
+\title{Ész Ventura\\102.~feladvány\\Zsebtolvaj a ködben}
+
+\begin{document}
+	\maketitle
+
+	\tableofcontents
+
+	\section{Egyszerűsített feladat}
+
+	Az egyszerűsített változatban feltételezzük, hogy a tolvaj ,,állapotmentes'', ,,nincs emlékezete'', és képes az általa már kirabolt embereket újra kirabolni.
+
+	\begin{figure}[H]
+		\caption*{Eseményfa $p = \frac{98}{98+2+2}$ értékével}
+		\centering
+		\includegraphics{tree}
+	\end{figure}
+
+	\subsection{Kérdések és válaszok}
+
+	\begin{task}
+		Mekkora a valószínűsége annak, hogy a tolvaj elmenekül?
+	\end{task}
+
+	\begin{answer}
+		Válasz: 50\%.
+	\end{answer}
+
+	\begin{proof}
+		A végtelen ciklusba ragadás valószínűsége az eseményfa alapján $\lim_{i\to\infty}p^i$, amely $0 < p < 1$ esetén $0$.
+		A feladat szövegéből következően $p = \frac{98}{98+2+2}$, tehát megfelel a feltételnek, így a határárték tényleg 0.
+		A végtelen ciklusba ragadás egyébként nem lehetetlen esemény, de valószínűsége 0 (és ez nem ellentmondás).
+
+		A két másik lehetséges kimenetel valószínűsége egymással azonos --- ez szintén az eseményfából látszik.
+		Tehát
+		\begin{align}
+			P\parenthesed{\text{Elmenekülés}} + P\parenthesed{\text{Elfogatás}} + P\parenthesed{\text{Végtelen}} &= 1\\
+			P\parenthesed{\text{Végtelen}} &= \lim_{i\to\infty}p^i = 0\\
+			P\parenthesed{\text{Elmenekülés}} : P\parenthesed{\text{Elfogatás}} &= 1 : 1\\
+			P\parenthesed{\text{Elmenekülés}} : P\parenthesed{\text{Elfogatás}} : P\parenthesed{\text{Végtelen}} &= 1 : 1 : 0\\
+			P\parenthesed{\text{Elmenekülés}} &= 0,5\\
+			P\parenthesed{\text{Elfogatás}} &= 0,5
+		\end{align}
+	\end{proof}
+
+	\begin{task}
+		És ha elmenekül, akkor átlagosan hány ember kirablása után?
+	\end{task}
+
+	Még mielőtt a válaszon elgondolkodnánk, felejünk előbb egy olyan kérdésre, amelyet az eseményfa alapján könnyebb megválaszolni.
+
+	Jelölje $\expvalgro$ a tolvaj által ,,átlagosan'' kirabolt emberek ,,bruttó'' számát (vagyis függetlenül attól, hogy végül a szabad utcára, vagy a rendőrök kezei közé kerül ezzel a pénzzel). 		Kontrasztként a ,,nettó'' jelentse azt, ha nem számoljuk be azokat az eseteket, amikor a rendőrök visszadják a pénzt a kárvallotaknak: az $\expvalnet$ netto érték legyen a sikeres elmenekülés során ,,átlagosan'', vagyis várható értékként meghatározható ,,netto'' rablásszám!
+
+	Könnyű lenne rávágni, hogy $\expvalnet = \frac12\expvalgro$, és ez igaz is, de egyáltalán nem triviális. Ezért most először a $\expvalgro$ bruttó rablásszámot mondjuk meg! Ezt a  várható értéket az eseményfa és egy határérték-segédtétel alapján jól meghatározhatjuk:
+
+	\begin{theorem}
+		Az akár sikeres, akár rendőrökbe futó eseteket ,,átlagoló'', vagyis várható értékként meghatározható ,,bruttó'' rablásszám:
+		\begin{equation}
+			\expvalgro = \frac p{\parenthesed{1-p}^3},
+		\end{equation}
+	\end{theorem}
+	\begin{proof}
+		\begin{align}
+			\expvalgro             &= \sum_{i=0}^\infty ip^i\parenthesed{1-p} = \parenthesed{1-p}\sum_{i=0}^\infty ip^i\\
+			\sum_{i=0}^\infty ip^i &= \frac p{\parenthesed{1-p}^2}\\
+			\expvalgro             &= \parenthesed{1-p} \cdot \frac p{\parenthesed{1-p}^2} = \frac p{\parenthesed{1-p}^3}
+		\end{align}
+	\end{proof}
+	\begin{theorem}
+		A bruttó és a nettó érték kapcsolata (e feladat esetében): $\expvalnet = \frac12\expvalgro$.
+	\end{theorem}
+	\begin{proof}
+		A bizonyítás akár a feladat élő, ,,hétköznapi'' szövege alapján is elvégezhető, a ,,hétköznapi'' logika alapján, de természetesen formalizált bizonyítások is adhatóak.
+
+		Az élőszavas bizonyítás: tegyük föl, hogy auz utcára kimenekült tolvajt is előbb-utóbb elkapja egy külön erre kiképzett különleges rendőrség.
+		Végezzünk el sok független kísérlet, majd vessük össze a kétféle rendőrség által lefoglalt pénzeket!
+
+		A formalizált bizonyítsás: végezzük el a végtelen sor képzését az eseményfából a megfelelő módosítással!
+	\end{proof}
+
+	\begin{answer}
+		Az egyszerűsített feladat fenti kérdésére tehát a válasz: a ,,nettó'' trablásszám értéke, az pedig a fenti tételek felhasználásával
+		\begin{equation}
+			\expvalnet = \frac12\expvalgro = \frac12\cdot\frac p{\parenthesed{1-p}^3} = \frac p{2\parenthesed{1-p}^3}
+		\end{equation}
+	\end{answer}
+
+	\subsection{Segédtétel}
+
+	A fentiek során azonban felhasználtunk egy segédtételt, nevezetesen:
+	\begin{lemm}
+		\begin{equation}
+			\sum_{i=0}^\infty ip^i = \frac p {\parenthesed{1-p}^2}
+		\end{equation}
+	\end{lemm}
+	\begin{proof}
+		\begin{align}
+			\sum_{i=0}^n ip^i &= \sum_{i=1}^n ip^i\\
+			\sum_{i=1}^n ip^i &= \sum_{i=1}^n p^i + \sum_{i=2}^n p^i + \sum_{i=3}^n p^i + \cdots + \sum_{i=n}^n p^i\\
+			\sum_{i=m}^n p^i        &= \sum_{i=0}^{n-m} p^{m+i} = p^m \sum_{i=0}^{n-m}p^i\\
+			\sum_{i=0}^{n-1}        &= \frac{p^n-1}{p-1}
+		\end{align}
+		\begin{align}
+			\sum_{i=0}^\infty ip^i &= \sum_{i=1}^\infty ip^i\\
+			\sum_{i=1}^\infty ip^i &= \sum_{i=1}^\infty p^i + \sum_{i=2}^\infty p^i + \sum_{i=3}^\infty p^i + \cdots\\
+			\sum_{i=m}^\infty p^i  &= \sum_{i=0}^\infty p^{m+i} = p^m\sum_{i=0}^\infty p_i\\
+			\sum_{i=0}^\infty      &= \frac1{1-p}
+		\end{align}
+		\begin{comment}
+			\begin{align}
+				\sum_{i=0}^\infty ip^i = \sum_{i=1}^\infty ip^i &= &  &    & &\sum_{i=1}^\infty p^i + {} &    &\sum_{i=2}^\infty p^i + {} &    &\sum_{i=3}^\infty p^i + \cdots\\
+							                        &= &  &p^1 & &\sum_{i=0}^\infty p^i + {} & p^2&\sum_{i=0}^\infty p^i + {} & p^3&\sum_{i=0}^\infty p^i + \cdots\\
+							                        &= & (&p^1 & &{}                    + {} & &p^2&{} + &p^3 + \cdots)\sum
+			\end{align}
+		\end{comment}
+		\begin{align}
+			\sum_{i=0}^\infty ip^i = \sum_{i=1}^\infty ip^i &= &    &\sum_{i=1}^\infty p^i + {} &    &\sum_{i=2}^\infty p^i + {} &    &\sum_{i=3}^\infty p^i + \cdots\\
+					                                &= & p^1&\sum_{i=0}^\infty p^i + {} & p^2&\sum_{i=0}^\infty p^i + {} & p^3&\sum_{i=0}^\infty p^i + \cdots
+		\end{align}
+		\begin{multline}
+			\sum_{i=0}^\infty ip^i = \parenthesed{p^1 + p^2 + \cdots}\sum_{i=0}^\infty p^i = \parenthesed{\sum_{i=1}^\infty p^i} \parenthesed{\sum_{i=0}^\infty p^i} = \parenthesed{p^1\sum_{i=0}^\infty p^i} \parenthesed{\sum_{i=0}^\infty p^i}=\\
+			= p\parenthesed{\sum_{i=0}^\infty p_i}^2 = p\parenthesed{\frac1{1-p}}^2 = \frac p{\parenthesed{1-p}^2}
+		\end{multline}
+	\end{proof}
+
+	\subsection{Tesztek, különböző függetlenségű modellek}
+
+	\subsubsection{Puszta numerikus ellenőrzési ,,modell''}
+
+	\paragraph{A fő tesztfüggvény} Haskell-részlet:
+
+	\definecolor{bg}{rgb}{0.95,0.95,0.95}
+	\begin{minted}[bgcolor=bg]{haskell}
+series:: Float -> Float
+series p = sum $ take infinity $ zipWith (*) naturals (map (p **) naturals)
+
+naturals = [0..]
+infinity = 100
+	\end{minted}
+
+	\paragraph{A teljes tesztlési környezet} Tesztmintával együtt:
+
+	\inputminted{haskell}{Series.hs}
+
+	\subsubsection{,,Majdnem-fizikai'' modell}
+
+	A ,,majdnem-fizikai'' modellnek az a feladata, hogy ne csak numberikusan ellenőrizze a felhasznált analízistételeket,
+	hanem arra is adjn némi bizonyságot, hogy az alkalmazott tételek megválasztása, a bizonyítás alapgondolata jó-e.
+	Ennek érdekében lényegében magát  feladat által leírt ,,fizikai világot'' kell minél közvetlenebbül fölépítenie,
+	úgy, hogy a választ ,,közvetlenül'', a modellezett alapjelenségekből mintegy emergens viselkedéssel kapjuk  meg.
+
+	Persze itt észszerű kompromisszumokat kötünk, és nem feltétlenül építünk véletlenszerűen bolyongó robotokat, sőt mégcsak a Brown-mozgást sem szimuláljuk.
+	Megelégszünk annyi szintlemenéssel, hogy a véletlenszámok szintjén fogjuk modellezni a fealadatot, és megbízunk abban, hogy a Haskell által generált álvéletlenszámok legalább statisztikai értelemben eléggé ,,igaziak'',
+\end{document}

@@ -1,9 +1,7 @@
-size(10cm, 0);
-
 string dollar(string formula) {return "$" + formula + "$";}
 string dollar(int numlit) {return dollar(string(numlit));}
 
-struct Choice
+struct ChoiceStatic
 {
 	pair O;
 	int val;
@@ -16,7 +14,7 @@ struct Choice
 		label(dollar(val), O);
 	}
 
-	Choice step()
+	ChoiceStatic step()
 	{
 		string expect = format("$" + string(val) + "\cdot p^{%d}\left(1-p\right)$", val);
 
@@ -42,18 +40,16 @@ struct Choice
 
 		label(expect, GP1, 2.6S);
 
-		return Choice(M1, val+1);
+		return ChoiceStatic(M1, val+1);
 	}
 
 	void steps(int n)
 	{
 		bool flag = false;
-		Choice last = this;
+		ChoiceStatic last = this;
 		for (int i = 0; i < n; ++i) {
 			last = last.step();
 		}
 		last.core();
 	}
 }
-
-Choice().steps(3);

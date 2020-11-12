@@ -1,5 +1,4 @@
-string dollar(string formula) {return "$" + formula + "$";}
-string dollar(int numlit) {return dollar(string(numlit));}
+import labeling;
 
 struct ChoiceStatic
 {

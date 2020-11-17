@@ -5,3 +5,8 @@ _minted-*
 *.dvi
 *.pdf
 *.eps
+
+*.o
+*.hi
+AI.c/a.out
+AI.hs/Main

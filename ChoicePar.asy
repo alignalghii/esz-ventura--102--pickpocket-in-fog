@@ -38,6 +38,7 @@ struct ChoicePar
 	ChoicePar step(pen furtherLine = solid, ChoicePar rebuilder = null)
 	{
 		bool inheriting = rebuilder == null;
+		bool sequencer = furtherLine == dashed;
 
 		real x = O.x;
 		real y = O.y;
@@ -45,7 +46,7 @@ struct ChoicePar
 		pair G1 = (x - 1.1, y - 1);
 		pair P1 = (x - 0.9, y - 1);
 		pair GP1 = (G1 + P1) / 2;
-		pair M1 = inheriting ? (x + 1  , y - 1) : (x + 1.5, y - 1.5);
+		pair M1 = !sequencer ? (x + 1  , y - 1) : (x + 1.5, y - 1.5);
 
 		path g1 = O--G1;
 		path p1 = O--P1;
@@ -53,7 +54,7 @@ struct ChoicePar
 
 		draw(left1.show(), g1, RightSide);
 		draw(left2.show(), p1, LeftSide );
-		draw(inheriting ? right.show() : "", m1, LeftSide, furtherLine);
+		draw(!sequencer ? right.show() : "", m1, LeftSide, furtherLine);
 		core();
 		dot(G1, 5+green);
 		dot(P1, 5+red);

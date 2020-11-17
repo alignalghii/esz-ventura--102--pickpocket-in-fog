@@ -18,11 +18,21 @@
 \newtheorem{lemm}{segédtétel}
 \newtheorem{theorem}{tétel}
 \newtheorem{answer}{válasz}
+\newtheorem{conjecture}{sejtés}
 \renewcommand{\qedsymbol}{$\blacksquare$}
 
+\usepackage{cancel}
+
+\newcommand{\squareparenthesed}[1]{\left[#1\right]}
 \newcommand{\parenthesed}[1]{\left(#1\right)}
+\newcommand{\openparenthesed}[1]{\left(#1\right.}
+\newcommand{\closeparenthesed}[1]{\left.#1\right)}
 \newcommand{\expvalnet}{E_{\text{netto}}}
 \newcommand{\expvalgro}{E_{\text{brutto}}}
+
+\newcommand{\setOf}[1]{\left\lbrace\,#1\,\right\rbrace}
+\newcommand{\enumOf}[2]{\left\lbrace\,#1,\dots,#2\,\right\rbrace}
+\newcommand{\setAbs}[2]{\left\lbrace\,#1\,\middle|\,#2\,\right\rbrace}
 
 \author{Endrey Márk}
 \title{Ész Ventura\\102.~feladvány\\Zsebtolvaj a ködben}
@@ -32,9 +42,545 @@
 
 	\tableofcontents
 
-	\section{Egyszerűsített feladat}
+	\section{Válaszok és a lényeg előrebocsátása}
 
-	Az egyszerűsített változatban feltételezzük, hogy a tolvaj ,,állapotmentes'', ,,nincs emlékezete'', és képes az általa már kirabolt embereket újra kirabolni.
+	Azt érdemes mindjárt az elején észrevenni, hogy a feladat alapját képező sztochasztikus modell(ek) szempontjából a ,,rendőr'' és a ,,kapu'' szerepköre közt nincs különbség.
+	A rendőr visszaadja a lefülelt pénzt az járókelőknek, a kapu nem, de a modellek szempontjából csak az  a lényeg, hogy mindkét objektum véget vet a játéknak.
+
+	Ez alapján már válaszolhatunk is a feladat könnyebbik kérdésére:
+
+	\begin{answer}
+		Az, hogy a tolvaj elmenekül-e, vagy elfogatik, egyszerűen a kapu\-létszám és a rendőr\-létszám egymáshoz való arányától függ.
+		Tehát pl.~ha az $a_K$ kapulétszám azonos az $a_R$ rendőrlétszámmal, akkor az esély 50\%-50\$.
+		Precízebben ennek belátása a későbbi oldalakon megrajzolt \emph{eseményfákból} fog látszani.
+	\end{answer}
+
+	A sztochasztikus modellekben viszont a rendőrőknek és a kapuknak (ezeknek a ,,befejező objektumoknak'') már csak az $A := a_K + a_R$ összlétszáma fog szerepet játszani.
+	A továbbiakban ezt az $A$ számot értelmezzük valamiféle általánosított értelemben vett rendőröknek. A kapu is ,,rendőr'' (csak nem adja vissza a pénzt az embereknek).
+
+	Az $A$ paraméter mellett természetesen a másik fontos paraméter a sétáló emberek $N$ létszáma lesz.
+
+	A fő kérdés mostantól tehát a ,,várható értéke'' a megszerzett pénznek, függetlenül attól, hogy azzal a tolvaj szabadon elmenekül, vagy lefülelik tőle.
+
+	\begin{answer}
+		Előrebocsátom, hogy ez a várható érték
+		\[
+			E_{A,N} = \frac N{A+1}
+		\]
+		ami a konrét feladat esetében $\frac{98}{4+1} = 19,6$.
+
+		Azonban ez még nem a tulajdonképpeni feladatkérdésre adandó válasz, hiszen a feladat a tolvaj elmenekülésére kérdez rá (vagyis, amennyiben kapuk helyett rendőrőkre bukkan, a pénzt visszakapják a járókelők, így az nem számít ebbe bele).
+
+		A pontos válaszhoz tekintsük úgy, hogy a kapuk is rendőrök --- különleges rendőrök ---, de a kapuk által ,,lefoglalt'' pénz egy különleges hivatalhoz kerül. Mennyi pénz kerül átlagosan ehhez a képzeletbeli ,,különleges hivatalhoz'', ha ismerjük az összes $A$ ,,rendőr'' által beszedett $E$ várható értéket? Nyilván a különleges rendőrök aránya a közönséges rendőrökhoz képest fog szerepet játszani ebben a fajta válaszpontosításban. Vagyis az előbb kapott $19,6$ értéknek a felét vesszük (hisz a kapuk és normál rendőrök száma megegyezik).
+
+		Az ,,elmenekülős'' átlagos zsákmány tehát $9,8$. 
+	\end{answer}
+
+	\subsection{A numerikus út kudarca, vígaszként egy puszta sejtéssel}
+
+	Mindenesetre a fentebb előrebocsátott
+
+	\[
+		E_{A,N} = \frac N{A+1}
+	\]
+
+	összefüggés eléggé meglepő egyszerűségi eredmény, főleg ha most előrebocsátom, milyen számolási modellek merülnek fel elsőre a legtermészetesebb módon.
+	Ezek ugyanis kissé elrejtik a lényeget, és eléggé bonyolultak!
+	Ennek szemléltetésére egy leegyszerűsített feladatverzióhoz tartozó számítást kivonatosan előre is bocsátok:
+
+	\begin{figure}[H]
+		\caption*{Eseményfa az $E_{A=2;N=6}$ várható érték számítására: 6 járókelő, két ,,rendőr'':}
+		\centering
+		\includegraphics[scale=0.5]{draw-8=6+2}
+	\end{figure}
+
+	\begin{align*}
+		E_{A:=2; N:=6} &= \frac{2}{8}0 + \frac{6}{8}\frac{2}{7}1 + \frac{6}{8}\frac{5}{7}\frac{2}{6}2 + \frac{6}{8}\frac{5}{7}\frac{4}{6}\frac{2}{5}3 + \frac{6}{8}\frac{5}{7}\frac{4}{6}\frac{3}{5}\frac{2}{4}4 + \frac{6}{8}\frac{5}{7}\frac{4}{6}\frac{3}{5}\frac{2}{4}\frac{2}{3}5 + \frac{6}{8}\frac{5}{7}\frac{4}{6}\frac{3}{5}\frac{2}{4}\frac{1}{3}\frac{2}{2}6\\
+		  &= \frac{2}{8}0 + \frac{6}{8}\frac{2}{7}1 + \frac{\not6}{8}\frac{5}{7}\frac{2}{\not6}2 + \frac{\not6}{8}\frac{\not5}{7}\frac{4}{\not6}\frac{2}{\not5}3 + \frac{\not6}{8}\frac{\not5}{7}\frac{\not4}{\not6}\frac{3}{\not5}\frac{2}{\not4}4 + \frac{\not6}{8}\frac{\not5}{7}\frac{\not4}{\not6}\frac{\not3}{\not5}\frac{2}{\not4}\frac{2}{\not3}5 + \frac{\not6}{8}\frac{\not5}{7}\frac{\not4}{\not6}\frac{\not3}{\not5}\frac{\not2}{\not4}\frac{1}{\not3}\frac{2}{\not2}6\\
+		  &= \frac2{8\cdot7}\parenthesed{6\cdot1 + 5\cdot2 + 4\cdot3 + 3\cdot2 + 2\cdot3 + 1\cdot6}\\
+		  &= \frac2{8\cdot7}\cdot\frac{6^3+3\cdot6^2+2\cdot6}6 = 2
+	\end{align*}
+
+	Bár számszakilag kijött a megelőlegzett $E_{A,N} = \frac N{A+1}$ egyenlőség a kokrét értékekre, de rejtve maradt bármiféle általános összefüggés.
+
+	Még nagyobb gond, hogy a számítás során szerepelt egy \[6\cdot1 + 5\cdot2 + 4\cdot3 + 3\cdot2 + 2\cdot3 + 1\cdot6\] összeg is, szóval egy ilyen ,,tolódószorzatos'' összeg is, amelyre nehéz skalázható módon zárt képletet találni.
+	Bár egy érdekes tételcsalád (a ,,$\sum_{i=1}^n i^2$  ,,négyzetes'', a $\sum_{i=1}^n i^3$ ,,köbös'', \dots stb összegzési képletcsalád) segítségével felírhatóak zárt képletek az efféle tolódószorzatos összegekre is,
+	de az eredeti feladat (4 ,,rendőr'', vagyis $E_{A=4;N=98}$ verzió) e segédtételek közül a \emph{negyedfokú} változatot fogja igényelni ($\sum_{i=1}^n i^4$), amely, bár több oldalnyi számolás után helyes eredményt fog adni, de teljesen rejtve fogja hagyni a végső egyszerű szép összefüggést. Arra jó, hogy maga a sejtés fel tud merülni, de csak a konkrét számolások numerikus eredményei által tud információt nyújtani: maga az összefüggés algebrailag nem jelenik meg benne. 
+
+	Ez épp azért fájdalmas dolog, mert a végső összefüggés szinte kiabál egy reinterpretáció után.
+	Nézzük csak meg jól a \[E_{A,N} = \frac N{A+1}\] sejtés képletét még egyszer!
+	Olyan, mintha a tolvaj ,,osztozna'' a rendőrőkkel, megvesztegetve őket:
+	\begin{itemize}
+		\item Ha $A=1$ vagyis pontosan egyetlenegy rendőr van, akkor a tolvaj pont ,,felez'' vele.
+		\item Ha pedig $A$ számú rendőr van, ,,igazságosan'' osztozik velük a tolvaj, és az elvileg maximális $N$ zsákmányból $\frac1{A+1}$ ,,osztalék'' szerint rá jutó részt, $\frac N{A+1}$ összeget irányoz elő magának.
+	\end{itemize}
+
+
+	Mindez már kínálja is a lényegi megoldási ötletet is: felépítek két különböző sztochasztikus modellt erre a feladatra.
+	\begin{description}
+		\item[Direkt modell:]
+		Az egyik olyan lesz, mint  fentebb mutatott, a feladat leírásának természetesen megfelelő, de nehezen számolható modell.
+		Előnye, hogy a feladat leírásának nyilvánvalóan pontosan megfelel, hátránya, hogy semmiben sem utal a végső $E_{A,N} = \frac N{A+1}$ összefüggésre, és nem is ad támpontot hozzá.
+		A numerikus számolások lehetségesek, de nehézkesek lesznek. Bár sok végigszámolt sok példa után a sejtés felmerülhet, de a numerikus egyezésen túl semmi nem fog rá utalni.
+		\item[Transzformált modell:]
+		A másik sztochasztikus modell viszont olyan lesz, mintha direkt egyenesen a $E_{A,N} = \frac N{A+1}$ összefüggés felmutatására lenne megkonstuálva,
+		és kifejezetten a rendőrök lefizetésére, illetve az e során megvalósuló ,,igazságos'' felosztásra épül.
+		Viszont elsőre  egyáltalán nem fog látszani, hogy ennek a modellnek mi köze van egyáltalán a feladathoz
+		(a végső összefüggést leszámítva, amit ugye még nem tudunk bizonyítani).
+	\end{description}
+	A bizonyítás lényege pontosan az lesz, hogy a két modell valamiféle rokonsága megmutatkozik. Ez a rokonság abban fog állni, hogy bizonyos értelemben mindkét modell egyfajta ,,igazságos játék'' megvalósulása lesz.
+
+	\subsection{Direkt modell}
+
+	Az első, a feladat leírása alapján felépített direkt modell egyszerűen az, hogy a rabló véletlenszerűen mozog.
+	A többi szereplőt egyszerűség kedvéért állónak is képzelhetjük.
+	Ha ,,befejezési objektumhoz'' ér hozzá (kapuhoz, rendőrhöz, egyszóval általánosított értelemben vett ,,rendőrhöz''), vége a játéknak.
+	A felírható eseményfa, és a várható értéket kiszámoló képlet olyan jellegű, mint amilyet előbb az előrebocsátásnál felrajzoltam.
+
+	Annyi --- a lényeget nem érintő --- interpretálási különbséget engedjünk meg, hogy
+	\begin{itemize}
+		\item Nincs kapu, csak rendőrök vannak. A kaput, ha szükség van á valamilyen részkérdéshez, tekintsük valamiféle megjelölt rendőrnek.
+		\item Mindenki áll, csak a tolvaj mozog
+		\item A rendőr az elkapáskor nem megfogja a tolvajt, hanem bevarrja az összes (még ki nem fosztott) járókelő zsebét, ezáltal a tolvaj számára elérhetetlenné teszi őket.
+		De akár úgy is tekinthetjük, hogy a rendőr, ha találkozik a tolvajjal, kifosztja az összes intakt járókelőt, mintegy elébevágva a tolvajnak.
+		A rendőr versengő tolvajtárs, de nem egyenrangú: viselkedése különleges a tolvajéhoz képest, mert a rendőr az összes ,,intakt'' járókelőt kifosztja, ha a tolvaj belébotlik.
+
+		Eufémikusan interpretálhatjuk persze úgy, hogy ha a rendőrbe beleboltik egy tolvaj, a rendőr azonnal bemondja a hangosbeszélőben, hogy mindenki varrja be a zsebét, de a sztochasztikus modell szempontjából ez csak díszlet, a matematikai jelentése ugyanaz.
+		\item A tolvaj alapvetően a fejében a járókelők vagyonának felét tartja normális zsákámynak (mármint 1 rendőr esetében; több rendőr esetén egyfajta $\frac1{A+1}$ ,,bribe osztalékhoz'' viszonyít). Mindenesetre a neki ,,járó'' vélt ,,jogos'' részesedésnél többet nyereségként, ennél kevesebbet pedig veszteségként él meg.
+	\end{itemize}
+
+	\subsection{Transzformált modell}
+
+	A másik modell másfajta szcenáriót tartalmaz. Az egyszerűség kedvéért egyelőre legyen csak egy ,,befejezési objektum'', amit tekintsünk rendőrnek.
+	A szabály az, hogy a tolvaj is áll, a rendőr is áll (és nem is lépnek soha közvetlen kapcsolatba egymással), viszont a járókelőket egyesével indítjuk útra, egész addig, amíg az épp aktuális járókelő véletlenszerűen választ a rendőr és a tolvaj között.
+
+	A rendőr itt nem viselkedik különlegesen a tolvajhoz képest. Amennyiben egy járókelő őt választja a tolvajjal szemben, éppúgy kifosztja \emph{azt és csak azt az adott járókelőt}, mint ahogy a tolvaj tenné. A rendőr itt versengő és \emph{egyenrangú} tolvajtárs: a sztochasztikus modell szempontjából nyugodtan tekinthetjük úgy, hogy a rendőr éppúgy kifosztja a ,,neki jutó'' járókelőt, mint a tolvaj tenné, csak a maga számára.
+
+	\subsection{Az ,,Adósok játéka'' interpretáció}
+	
+	A két modell nagyon más, máshogy néz ki az eseményfájuk, és azon egész más  valószínűségek és az értékek elrendezése is.
+	De amíg mélyebb összefüggést nem találunk, addig is legalább a szöveges értelmezés szempontjából közelítsük a két modellt egymáshoz!
+
+	Az $N$ járókelő mostantól nem más, mint adósok serege, akik összes vagyonukkal a tolvajnak és a rendőröknek tartoznak. A tolvaj valójában hitelező, sőt ő csak egy hitelező a többi, $A$ db hitelezőtársa mellett, akiket rendőröknek nevezünk. Minden hitelező (a tolvaj és a rendőrök) pontosan egyforma arányban adott kölcsön.
+
+	Tehát pl. ha csak 1 a rendőrök összlétszáma, akkor a rendőr és a tolvaj teljesen egyenrangú hitelezőtársak, akik jogos igényt támasztanak a ,,járókelők'' (adósok) teljes vagyonára, fele-fele arányban minden egyes adós esetében.
+
+	A két hitelező azonban egyfajta versengésben áll egymással: mindketten megpróbálnak jogos kölcsönrészükön felül is a lehető legtöbbet behajtani.
+	Viszont legalább képesek megegyezni egymással a versengési játék szabályaiban. Ebben igazságosságra töekszenek: a játékban lehet nyerni és veszíteni, de a játékszabályoknak statisztikailag igazsgosaknak kell lenniük.
+
+	\subsubsection{Az $A=1$ eset, egyetlen rendőr/hitelezőtárs}
+
+	Most nézzük a két fent említett szotchasztikus modellt: vajon ezek rendre igazságos játéknak felelnek meg? A rendőrök száma egyelőre legyen pontosan 1.
+
+	\paragraph{A transzormált modell} igazságossága nyilvánvaló:
+	minden egyes adós esetében 
+	\begin{itemize}
+		\item 50\%, hogy a tolvaj ,,kapja meg'' az adóst, amely esetben övé az adós teljes vagyona, amely a jogos kölcsönrészt figyelembe véve $\frac12$ nyereséget jelent (hiszen ennyi többlethez jut az őt megillető jogos kölcsönrészen felül).
+		\item Amennyiben a rendőr ,,kapja meg'' az adóst (szintén 50\% eséllyel), akkor az a tolvaj szempontjából $\frac12$ veszteséget jelent (hiszen elveszti az őt illető jogos kölcsönrészt).
+	\end{itemize}
+	A játék igazságos: azonosak az esélyek is, és a tétek is.
+
+	\paragraph{A direkt modellben} a játék nem ilyen szimmetrikus, de ez is igazságos játéknak fog bizonyulni, mint alább meg fogjuk látni, csak ez nem ennyire nyilvánvaló.
+
+	Továbbra is legyen csak egyetlen rendőr, és jelölje $n$ a hátralevő intakt járókelők számát,
+	\begin{itemize}	
+		\item $\frac{n}{n+1}$ az esély, hogy a tolvaj járókelőre (adósra) bukkan, amely esetben övé az adós teljes vagyona, amely a jogos kölcsönrészt figyelembe véve $\frac12$ nyereséget jelent (hiszen ennyi többlethez jut az őt megillető jogos kölcsönrészen felül).
+		\item Amennyiben viszont a tolvaj rendőrre bukkan rá ($\frac1{n+1}$ eséllyel), a játék szabálya szerint a rendőr ki fogja fosztani az összes hátramaradt (vagyis $n$) járókelőt, ez pedig a a tolvaj szempontjából $\frac n2$ veszteséget jelent (az $n$ járókelő vagyonának a fele illetné meg őt jogos kölcsönrészként, márpedig a rendőr valamennyit kifosztja, azaz a tolvaj mind az $n$ játékos után egyszerre veszti el az őt illető jogos kölcsönrészt).
+	\end{itemize}
+	Azt sejtjük, hogy a nyilvánvaló asszimetria ellenére ez a játék is igazságos: a kis téthez nagy esély, a nagy téthez kis esély tartozik. A tolvaj csak kis eséllyel bukkan rendőrre, de akkor a rendőr javára nagy veszteség fogja érni őt.
+	Számoljunk pontos várható értéket a nyereségre:
+	\[E_{\text{lépés}} = \frac12\cdot\frac{n}{n+1} - \frac n2\cdot\frac1{n+1} = 0,\]
+	vagyis a játék igazságos.
+
+	Az $A = 1$ paraméter esetében tehát a két modell equivalens egymással a nyereség várható értéke szempontjából.
+
+	\subsubsection{Az $A\in \mathbb N$ eset, tetszőleges számú rendőr/hitelezőtárs}
+
+	Ugyanilyen megfontolással adódik, hogy a játék nemcsak $A = 1$, hanem tetszőleg $A$ számú ,,rendőr'' (hitelezőtárs) esetében is igazságos, természetesen ebben az esetben a tolvajnak nem $\frac12$-hez, hanem $\frac1{A+1}$ a jogos kölcsönrésze, ehhez kell viszonyítani a nyereséget és a veszteséget.
+
+	\paragraph{A transzformált modell} igazságossága nyilvánvaló (a tétek és esélyek természetes megoszlása miatt). Az adósok véletlenszerűen ,,választanak'' a hitelezők között, akik közt a tolvaj is egyike a hitelezőknek. Mindegyik hitelező a ,,választóinak'' teljes vagyonát viszi. A direkt modelltől eltérően a rendőrök is ugyanolyan viselkedésű hitelezők mint a tolvaj: ,,megválasztásuk esetén'' ők is csak a saját választók vagyonát kapják.
+	\begin{itemize}
+		\item A tolvajnak minden egyes adós esetén $\frac1{A+1}$ az esélye, hogy őt válasszák, ekkor relatív nyeresége $1 - \frac{1}{A+1}$ lesz (hiszen a neki jogosan járó $\frac{1}{A+1}$ osztalék helyet az adós teljes vagyonát viszit, így épp ez a $1 - \frac{1}{A+1}$ különbözet a relatív haszna.
+		\item A rossz eset a tolvaj szempontjából persze az (minden egyes adósra), ha az adós őhelyette valamelyik másik hitelezőt (vagyis egy rendőrt) választ. Ennek esélye $\frac A{A+1}$, --- va gyis elég nagy, --- viszont a veszteség mérsékelt: $\frac1{A+1}$ (vagyis a tolvaj elveszti az adós után neki járó jogos kölcsönrészt, de csak ennyit).
+	\end{itemize}
+
+	Látszik, hogy a kis tétekhez épp arányosan tartozik nagyobb esély, és viszont. Persze azért nézzük meg pontosan is: végezzük el a relatív nyereség várható értékének kiszámítását:
+	\[E_{\text{lépés}} = \frac1{A+1}\cdot\underbrace{\parenthesed{1 - \frac{1}{A+1}}}_{\frac A{A+1}} - \frac A{A+1}\cdot\frac1{A+1} = 0.\]
+
+	Vagyis a transzformált modell tetszőleges $A$ számú rendőr esetén is igazságos. Ez viszonylag jól látszik kapásból is, mert az esélyek és a tétek természetes módon felelnek meg egymásnak.
+
+	\paragraph{A direkt modell} igazságosságának belátásához kevésbé nyilvánvaló most is, újra részletezzük a  várhatóérték-számítást:
+	
+	\begin{itemize}	
+		\item $\frac{n}{n+A}$ az esély, hogy a tolvaj járókelőre (adósra) bukkan, amely esetben övé az adós teljes vagyona, amely a tolvajt illető jogos $\frac1{A+1}$ kölcsönrészhez viszonyítva relatívan  $1-\frac1{A+1}$ nyereséget jelent (hiszen ennyi többlethez jut az őt megillető jogos kölcsönrészen felül).
+		\item Amennyiben viszont a tolvaj rendőrre bukkan rá ($\frac A{n+A}$ eséllyel), a játék szabálya szerint a rendőr ki fogja fosztani az összes hátramaradt (vagyis $n$) járókelőt, ez pedig a a tolvaj szempontjából $n\cdot\frac1{A+1} = \frac n{A+1}$ veszteséget jelent (az $n$ járókelő vagyonának a $\frac1{A+1}$ része illeti meg őt jogos kölcsönrészként, márpedig a rendőr valamennyit kifosztja, azaz a tolvaj mind az $n$ játékos után egyszerre veszti el az őt illető jogos kölcsönrészt).
+	\end{itemize}
+	Azt sejtjük, hogy a nyilvánvaló asszimetria ellenére ez a játék is igazságos: a kis téthez nagy esély, a nagy téthez kis esély tartozik. A tolvaj csak kis eséllyel bukkan rendőrre, de akkor a rendőr javára nagy veszteség fogja érni őt.
+	Számoljunk pontos várható értéket a nyereségre egy járókelőnyi lépésre:
+	\[E_{\text{lépés}} = \frac{n}{n+A}\cdot\underbrace{\parenthesed{1-\frac1{A+1}}}_{\frac A{A+1}} - \frac A{n+A}\cdot\frac n{A+1} = 0,\]
+	vagyis a játék igazságos.	
+
+
+	\section{Eseményfák. Modelltranszformáció nélküli ,,favágó'' számítások}
+
+	Bár a fent említett ,,modellösszehasonlítós'' módszer nélkül, puszta számítási ,,nyers erővel'' is el lehet jutni a fő összefüggés
+	\[
+		E_{A,N} = \frac N{A+1}
+	\]
+	megsejtéséig, ez nem lesz bizonyító erejű. A nyers számítások mégsem értelmetlenek teljesen:
+	például a hozzájuk tartozó ábrák --- az ,, \emph{eseményfák}'' --- sokat segítettek nekem a feladat megértésében,
+	maguk a numerikus eredmények pedig a ejtés felállításában.
+
+	Az eseményfákra próbálok általános sémát is mutatni, de főleg konkrét példák fognak szerepelni ,,kisebb'', ,,egyszerűsített'' feladatváltozatokra,
+	amelyek abban különböznek az eredeti ,,nagy''feladattól, hogy kevesebb rendőr és/vagy  kevesebb járókelő van.
+
+	\begin{figure}[H]
+		\caption*{Eseményfa általános ábrája $E_{A,N}$ számításához}
+		\centering
+		\includegraphics[scale=0.5]{draw-general-rule}
+	\end{figure}
+
+	\begin{figure}[H]
+		\caption*{Eseményfa $E_{A=1;N=6}$ számításához, jelezve a dolog algebráját is}
+		\centering
+		\includegraphics[scale=0.5]{draw-6+1}
+	\end{figure}
+
+	\begin{figure}[H]
+		\caption*{Eseményfa $E_{A=1;N=6}$ számításához, numerikus értékekkel csak}
+		\centering
+		\includegraphics[scale=0.5]{draw-7=6+1}
+	\end{figure}
+
+	\begin{align*}
+		E_{A:=1; N:=6} &= \frac{1}{7}0 + \frac{6}{7}\frac{1}{6}1 + \frac{6}{7}\frac{5}{6}\frac{1}{5}2 + \frac{6}{7}\frac{5}{6}\frac{4}{5}\frac{1}{4}3 + \frac{6}{7}\frac{5}{6}\frac{4}{5}\frac{3}{4}\frac{1}{3}4 + \frac{6}{7}\frac{5}{6}\frac{4}{5}\frac{3}{4}\frac{2}{3}\frac{1}{2}5 + \frac{6}{7}\frac{5}{6}\frac{4}{5}\frac{3}{4}\frac{2}{3}\frac{1}{2}\frac{1}{1}6\\
+		  &= \frac{1}{7}0 + \frac{\not6}{7}\frac{1}{\not6}1 + \frac{\not6}{7}\frac{\not5}{\not6}\frac{1}{\not5}2 + \frac{\not6}{7}\frac{\not5}{\not6}\frac{\not4}{\not5}\frac{1}{\not4}3 + \frac{\not6}{7}\frac{\not5}{\not6}\frac{\not4}{\not5}\frac{\not3}{\not4}\frac{1}{\not3}4 + \frac{\not6}{7}\frac{\not5}{\not6}\frac{\not4}{\not5}\frac{\not3}{\not4}\frac{\not2}{\not3}\frac{1}{\not2}5 + \frac{\not6}{7}\frac{\not5}{\not6}\frac{\not4}{\not5}\frac{\not3}{\not4}\frac{\not2}{\not3}\frac{\not1}{\not2}\frac{1}{\not1}6\\
+		  &= 0 + \frac17 + \frac27 + \frac37 + \frac47 + \frac57 + \frac67\\
+		  &= \frac{1+2+3+4+5+6}7 = \frac{\frac{6\cdot7}2}7 = \frac{\frac{6\cdot\cancel7}2}{\cancel7} = 3
+	\end{align*}
+
+	\begin{figure}[H]
+		\caption*{Eseményfa $E_{A=2;N=6}$ számításához, jelezve a dolog algebráját is}
+		\centering
+		\includegraphics[scale=0.5]{draw-6+2}
+	\end{figure}
+
+	\begin{figure}[H]
+		\caption*{Eseményfa $E_{A=2;N=6}$ számításához, numerikus értékekkel csak}
+		\centering
+		\includegraphics[scale=0.5]{draw-8=6+2}
+	\end{figure}
+
+	\begin{align*}
+		E_{A:=2; N:=6} &= \frac{2}{8}0 + \frac{6}{8}\frac{2}{7}1 + \frac{6}{8}\frac{5}{7}\frac{2}{6}2 + \frac{6}{8}\frac{5}{7}\frac{4}{6}\frac{2}{5}3 + \frac{6}{8}\frac{5}{7}\frac{4}{6}\frac{3}{5}\frac{2}{4}4 + \frac{6}{8}\frac{5}{7}\frac{4}{6}\frac{3}{5}\frac{2}{4}\frac{2}{3}5 + \frac{6}{8}\frac{5}{7}\frac{4}{6}\frac{3}{5}\frac{2}{4}\frac{1}{3}\frac{2}{2}6\\
+		  &= \frac{2}{8}0 + \frac{6}{8}\frac{2}{7}1 + \frac{\not6}{8}\frac{5}{7}\frac{2}{\not6}2 + \frac{\not6}{8}\frac{\not5}{7}\frac{4}{\not6}\frac{2}{\not5}3 + \frac{\not6}{8}\frac{\not5}{7}\frac{\not4}{\not6}\frac{3}{\not5}\frac{2}{\not4}4 + \frac{\not6}{8}\frac{\not5}{7}\frac{\not4}{\not6}\frac{\not3}{\not5}\frac{2}{\not4}\frac{2}{\not3}5 + \frac{\not6}{8}\frac{\not5}{7}\frac{\not4}{\not6}\frac{\not3}{\not5}\frac{\not2}{\not4}\frac{1}{\not3}\frac{2}{\not2}6\\
+		  &= \frac2{8\cdot7}\parenthesed{6\cdot1 + 5\cdot2 + 4\cdot3 + 3\cdot2 + 2\cdot3 + 1\cdot6}\\
+		  &= \frac2{8\cdot7}\cdot\frac{6^3+3\cdot6^2+2\cdot6}6 = 2
+	\end{align*}
+
+
+	\begin{figure}[H]
+		\caption*{Eseményfa $E_{A=4;N=10}$ számításához, jelezve a dolog algebráját is}
+		\centering
+		\includegraphics[scale=0.5]{draw-4+10}
+	\end{figure}
+
+	\begin{figure}[H]
+		\caption*{Eseményfa $E_{A=4;N=10}$ számításához, numerikus értékekkel csak}
+		\centering
+		\includegraphics[scale=0.5]{draw-14=4+10}
+	\end{figure}
+	\begin{align*}
+		&E_{A:=4; N:=10} = 0 + {}\\
+		&+ \frac{10}{14}\frac{4}{13}1 + \frac{10}{14}\frac{9}{13}\frac{4}{12}2 + \frac{10}{14}\frac{9}{13}\frac{8}{12}\frac{4}{11}3 + \frac{10}{14}\frac{9}{13}\frac{8}{12}\frac{7}{11}\frac{4}{10}4 + \frac{10}{14}\frac{9}{13}\frac{8}{12}\frac{7}{11}\frac{6}{10}\frac{4}{9}5 + \frac{10}{14}\frac{9}{13}\frac{8}{12}\frac{7}{11}\frac{6}{10}\frac{5}{9}\frac{4}{8}6 {}+{}\\
+		&+ \frac{10}{14}\frac{9}{13}\frac{8}{12}\frac{7}{11}\frac{6}{10}\frac{5}{9}\frac{4}{8}\frac{4}{7}7 + \frac{10}{14}\frac{9}{13}\frac{8}{12}\frac{7}{11}\frac{6}{10}\frac{5}{9}\frac{4}{8}\frac{3}{7}\frac{4}{6}8 + \frac{10}{14}\frac{9}{13}\frac{8}{12}\frac{7}{11}\frac{6}{10}\frac{5}{9}\frac{4}{8}\frac{3}{7}\frac{2}{6}\frac{4}{5}9 + \frac{10}{14}\frac{9}{13}\frac{8}{12}\frac{7}{11}\frac{6}{10}\frac{5}{9}\frac{4}{8}\frac{3}{7}\frac{2}{6}\frac{1}{5}\frac{4}{4}10 =\\
+		&= \frac{10}{14}\frac{4}{13}1 + \frac{10}{14}\frac{9}{13}\frac{4}{12}2 + \frac{10}{14}\frac{9}{13}\frac{8}{12}\frac{4}{11}3 + \frac{\cancel{10}}{14}\frac{9}{13}\frac{8}{12}\frac{7}{11}\frac{4}{\cancel{10}}4 + \frac{\cancel{10}}{14}\frac{\cancel{9}}{13}\frac{8}{12}\frac{7}{11}\frac{6}{\cancel{10}}\frac{4}{\cancel{9}}5 + \frac{\cancel{10}}{14}\frac{\cancel{9}}{13}\frac{\cancel{8}}{12}\frac{7}{11}\frac{6}{\cancel{10}}\frac{5}{\cancel9}\frac{4}{\cancel8}6 {}+{}\\
+		&+ \frac{\cancel{10}}{14}\frac{\cancel9}{13}\frac{\cancel8}{12}\frac{\cancel7}{11}\frac{6}{\cancel{10}}\frac{5}{\cancel9}\frac{4}{\cancel8}\frac{4}{\cancel7}7 + \frac{\cancel{10}}{14}\frac{\cancel9}{13}\frac{\cancel8}{12}\frac{\cancel7}{11}\frac{\cancel6}{\cancel{10}}\frac{5}{\cancel9}\frac{4}{\cancel8}\frac{3}{\cancel7}\frac{4}{\cancel6}8 + \frac{\cancel{10}}{14}\frac{\cancel9}{13}\frac{\cancel8}{12}\frac{\cancel7}{11}\frac{\cancel6}{\cancel{10}}\frac{\cancel5}{\cancel9}\frac{4}{\cancel8}\frac{3}{\cancel7}\frac{2}{\cancel6}\frac{4}{\cancel5}9 + \frac{\cancel{10}}{14}\frac{\cancel9}{13}\frac{\cancel8}{12}\frac{\cancel7}{11}\frac{\cancel6}{\cancel{10}}\frac{\cancel5}{\cancel9}\frac{\cancel4}{\cancel8}\frac{3}{\cancel7}\frac{2}{\cancel6}\frac{1}{\cancel5}\frac{4}{\cancel4}10 =\\
+		&= \frac{10}{14}\frac{4}{13}1 + \frac{10}{14}\frac{9}{13}\frac{4}{12}2 + \frac{10}{14}\frac{9}{13}\frac{8}{12}\frac{4}{11}3 + \frac{9\cdot8\cdot7\cdot4}{14\cdot13\cdot12\cdot11}4 + \frac{8\cdot7\cdot6\cdot4}{14\cdot13\cdot12\cdot11}5 + \frac{7\cdot6\cdot5\cdot4}{14\cdot13\cdot12\cdot11}6 {}+{}\\
+		&+ \frac{6\cdot5\cdot4\cdot4}{14\cdot13\cdot12\cdot11}7 + \frac{5\cdot4\cdot3\cdot4}{14\cdot13\cdot12\cdot11}8 + \frac{4\cdot3\cdot2\cdot4}{14\cdot13\cdot12\cdot11}9 + \frac{3\cdot2\cdot1\cdot4}{14\cdot13\cdot12\cdot11}10 =\\
+		&= \frac{4}{14\cdot13\cdot12\cdot11}\openparenthesed{\boxed{12\cdot11\cdot10}\cdot1 + \boxed{11\cdot10\cdot9}\cdot2 + \boxed{10\cdot9\cdot8}\cdot3 + \boxed{9\cdot8\cdot7}\cdot4 + \boxed{8\cdot7\cdot6}\cdot5 +{}}\\
+		&+ \closeparenthesed{\boxed{7\cdot6\cdot5}\cdot6 + \boxed{6\cdot5\cdot4}\cdot7 + \boxed{5\cdot4\cdot3}\cdot8 + \boxed{4\cdot3\cdot2}\cdot9 + \boxed{3\cdot2\cdot1}\cdot10} =\\
+		&= \frac{4}{14\cdot13\cdot12\cdot11}\sum_{i=1}^{10} i\parenthesed{13-i}\parenthesed{12-i}\parenthesed{11-i} =\\
+		&= \frac{4}{11\cdot12\cdot13\cdot14}\sum_{i=1}^{10} i\parenthesed{11-i}\parenthesed{12-i}\parenthesed{13-i} =\\
+		\intertext{\dots próbáljuk meg általánosítani, paraméteresen felírni, ahol $N$ jelölje a sétálók, $A$ pedig a végkifejletek ($a_K$ kapuk és $a_R$ rendőrök együttes $a_K + a_R$) számát:}
+		&= \frac A{\underbrace{\parenthesed{N+1} \cdot \cdots \cdot \parenthesed{N+A}}_{\text{Együtt $A$ darab tényező}}}\sum_{i=1}^N \overbrace{i\parenthesed{N+1-i}\parenthesed{N+2-i}\cdots\parenthesed{N+A-1-i}}^{\text{Együtt $A$ darab tényező, $1 +\parenthesed{A-1}$ megoszlásban}} =\\
+		&= \frac A{\prod_{i=1}^A\parenthesed{N+i}}\sum_{i=1}^N i\prod_{j=1}^{A-1}\parenthesed{N+j-i}.\\
+		\intertext{Azért az általánosítás mellett fejezzük be a konkrét példát is! Szóval ott tartottunk, hogy}
+		\dots &= \frac{4}{11\cdot12\cdot13\cdot14}\sum_{i=1}^{10} i\parenthesed{11-i}\parenthesed{12-i}\parenthesed{13-i} ={}\\
+		&= \frac{4}{11\cdot12\cdot13\cdot14}\cdot\frac{10^5 + 10\cdot10^4 + 35\cdot10^3 +50\cdot10^2 + 24\cdot10}{20} =\\
+		&= 2.
+	\end{align*}
+
+	\begin{theorem}
+		\[
+			E_{A,N} = \frac A{\prod_{i=1}^A\parenthesed{N+i}}\sum_{i=1}^N i\prod_{j=1}^{A-1}\parenthesed{N+j-i}.
+		\]
+	\end{theorem}
+	\begin{proof}
+		A bizonyításnak elvileg a fent említett levezetésnél az általánosítási lépés átgondolásából kellene állnia,
+		de itt most a ,,bizonyítás'' csak a korább említett kis számos példákra való ellenőrzésre fog korlátozódni.
+
+		Amúgy még jó lenne programmal az eredeti szöveges példa alapján felépített, minnél fizikaközelibb, valósághűbb fizikai modellt felállítani
+		(legalább egy stochasztikus modellt véletlenszámok erejéig),
+		és nagyszámú futtatási kísérletre statisztikai ellenőrzést, hipotézisfelállítást végezni.
+
+		Mindenesetre most a keretekhez igazodva szorítkozzunk csak a kisszámú példákra való sima numerikus ellenőrzésre!
+		\begin{align*}
+			E_{A=1; N=6 } &= \frac1{\parenthesed{6+1}}\sum_{i=1}^6 i = \frac1{\cancel{\parenthesed{6+1}}}\cdot\frac{6\cancel{\parenthesed{6+1}}}2 = 3\\
+			E_{A=2; N=6 } &= \frac2{\parenthesed{6+1}\parenthesed{6+2}}\sum_{i=1}^6 i\parenthesed{6+1-i} = \frac2{\parenthesed{6+1}\parenthesed{6+2}}\cdot\frac{6^3+3\cdot6^2+2\cdot6}{6} = 2
+			%E_{A=4; N=10} &= \frac4{11\cdot12\cdot13\cdot14}\sum_{i=1}^{10}i\parenthesed{11-i}\parenthesed{12-i}\parenthesed{13-i}
+		\end{align*}
+	\end{proof}
+
+	\begin{theorem}
+		\[
+			E_{A=4;N} = \frac{N^5 + 10N^4 + 35N^3 +50N^2 + 24N}{5\parenthesed{N+1}\parenthesed{N+2}\parenthesed{N+3}\parenthesed{N+4}}.
+		\]
+	\end{theorem}
+	\begin{proof}
+		\begin{align*}
+			E_{A=4; N} &= \frac4{\parenthesed{N+1}\parenthesed{N+2}\parenthesed{N+3}\parenthesed{N+4}}\sum_{i=1}^N i\parenthesed{N+1-i}\parenthesed{N+2-i}\parenthesed{N+3-i} =\\
+			           &= \frac4{\parenthesed{N+1}\parenthesed{N+2}\parenthesed{N+3}\parenthesed{N+4}}\cdot\frac{N^5 + 10N^4 + 35N^3 +50N^2 + 24N}{20} =\\
+			           &= \frac{N^5 + 10N^4 + 35N^3 +50N^2 + 24N}{5\parenthesed{N+1}\parenthesed{N+2}\parenthesed{N+3}\parenthesed{N+4}}
+		\end{align*}
+	\end{proof}
+
+
+	\begin{figure}[H]
+		\caption*{Eseményfa $4+98$ paraméterezéssel, jelezve a dolog algebráját is}
+		\centering
+		\includegraphics[scale=0.5]{draw-4+98}
+	\end{figure}
+
+	\begin{figure}[H]
+		\caption*{Eseményfa $4+98$ paraméterezéssel, numerikus értékekkel csak}
+		\centering
+		\includegraphics[scale=0.5]{draw-102=4+98}
+	\end{figure}
+
+	\begin{answer}
+		\begin{align*}
+			E_{A=4;N=98} &= \frac{N^5 + 10N^4 + 35N^3 +50N^2 + 24N}{5\parenthesed{N+1}\parenthesed{N+2}\parenthesed{N+3}\parenthesed{N+4}} =\\
+			             &= \frac{98^5 + 10\cdot98^4 + 35\cdot98^3 +50\cdot98^2 + 24\cdot98}{5\cdot99\cdot100\cdot101\cdot102}\\
+			             &= \frac{98}5 = 19,6
+		\end{align*}
+	\end{answer}
+
+	\begin{conjecture}
+		\[
+			E_{A,N} = \frac N{A+1}
+		\]
+	\end{conjecture}
+	\begin{proof}
+		Egyelőre forgalmam sincs!
+		Bár az eddigi eredmények engednek sejtést engendni erre a képletre, és a feltárt példákra igaz is, az általános összefüggést nem tudják bizonyítani.
+		Valószínűleg fontos meglátást, invariánsok felismerését mulasztottam el.
+
+		Ezzel együtt is, azt rögtön láthatjuk, hogy az $A=0$ esetre a dolog triviálisan igaz: ha nincs sem kapu, sem rendőr, akkor $E_{A=0;N} = N$, a tolvaj egyszerűen kifoszt mindenkit, majd, miután mindenkit kifosztott lesz, szükségszerűen leáll, hisz nincs már kit kifosztani.
+
+		Az $A=1$ esetén (egy leállási objektum van) a sejtés szerint a tolvaj az emberek felét fosztja ki átlagban: $E_{A=2;N} = \frac N2$. Képzeletben mintegy ,,megosztozik'' a leállási objektummal. Számszakilag nézve ugyanaz az eredmény, mintha kifosztana mindenkit, és megvesztegetve a rendőrt, átengedné neki a zsákmány felét!
+	\end{proof}
+
+	\section{Függelék}
+
+	\subsection{Segédtétel}
+
+	A fentiek során azonban felhasználtunk több segédtételt is.
+
+	\subsubsection{Egy végtelen sorra vonatkozó segédtétel}
+	\begin{lemm}
+		\begin{equation}
+			\sum_{i=0}^\infty ip^i = \frac p {\parenthesed{1-p}^2}
+		\end{equation}
+	\end{lemm}
+	\begin{proof}
+		\begin{align}
+			\sum_{i=0}^n ip^i &= \sum_{i=1}^n ip^i\\
+			\sum_{i=1}^n ip^i &= \sum_{i=1}^n p^i + \sum_{i=2}^n p^i + \sum_{i=3}^n p^i + \cdots + \sum_{i=n}^n p^i\\
+			\sum_{i=m}^n p^i        &= \sum_{i=0}^{n-m} p^{m+i} = p^m \sum_{i=0}^{n-m}p^i\\
+			\sum_{i=0}^{n-1}        &= \frac{p^n-1}{p-1}
+		\end{align}
+		\begin{align}
+			\sum_{i=0}^\infty ip^i &= \sum_{i=1}^\infty ip^i\\
+			\sum_{i=1}^\infty ip^i &= \sum_{i=1}^\infty p^i + \sum_{i=2}^\infty p^i + \sum_{i=3}^\infty p^i + \cdots\\
+			\sum_{i=m}^\infty p^i  &= \sum_{i=0}^\infty p^{m+i} = p^m\sum_{i=0}^\infty p_i\\
+			\sum_{i=0}^\infty      &= \frac1{1-p}
+		\end{align}
+		\begin{comment}
+			\begin{align}
+				\sum_{i=0}^\infty ip^i = \sum_{i=1}^\infty ip^i &= &  &    & &\sum_{i=1}^\infty p^i + {} &    &\sum_{i=2}^\infty p^i + {} &    &\sum_{i=3}^\infty p^i + \cdots\\
+							                        &= &  &p^1 & &\sum_{i=0}^\infty p^i + {} & p^2&\sum_{i=0}^\infty p^i + {} & p^3&\sum_{i=0}^\infty p^i + \cdots\\
+							                        &= & (&p^1 & &{}                    + {} & &p^2&{} + &p^3 + \cdots)\sum
+			\end{align}
+		\end{comment}
+		\begin{align}
+			\sum_{i=0}^\infty ip^i = \sum_{i=1}^\infty ip^i &= &    &\sum_{i=1}^\infty p^i + {} &    &\sum_{i=2}^\infty p^i + {} &    &\sum_{i=3}^\infty p^i + \cdots\\
+					                                &= & p^1&\sum_{i=0}^\infty p^i + {} & p^2&\sum_{i=0}^\infty p^i + {} & p^3&\sum_{i=0}^\infty p^i + \cdots
+		\end{align}
+		\begin{multline}
+			\sum_{i=0}^\infty ip^i = \parenthesed{p^1 + p^2 + \cdots}\sum_{i=0}^\infty p^i = \parenthesed{\sum_{i=1}^\infty p^i} \parenthesed{\sum_{i=0}^\infty p^i} = \parenthesed{p^1\sum_{i=0}^\infty p^i} \parenthesed{\sum_{i=0}^\infty p^i}=\\
+			= p\parenthesed{\sum_{i=0}^\infty p_i}^2 = p\parenthesed{\frac1{1-p}}^2 = \frac p{\parenthesed{1-p}^2}
+		\end{multline}
+	\end{proof}
+
+	\subsubsection{Tolódó-szorzatos szummázás segédtételcsaládja}
+
+	\begin{lemm}
+		\[\sum_{i=1}^n i\parenthesed{n+1-i} = \frac{n^3+3n^2+2n}{6}\]
+	\end{lemm}
+	\begin{proof}
+		\begin{align}
+			\sum_{i=1}^n i\parenthesed{n+1-i} = \sum_{i=1}^n\parenthesed{i\parenthesed{n+1} - i^2} &= \sum_{i=1}^n i\parenthesed{n+1} - \sum_{i=1}^n i^2\\
+			                                                                                       &= \parenthesed{n+1}\sum_{i=1}^n i - \frac{2n^3+3n^2+n}{6}\\
+			                                                                                       &= \parenthesed{n+1}\frac{n\parenthesed{n+1}}2 - \frac{2n^3+3n^2+n}{6}\\
+			                                                                                       &= \frac{n\parenthesed{n+1}^2}2 - \frac{2n^3+3n^2+n}{6}\\
+			                                                                                       &= \frac{n^3+3n^2+2n}{6}
+		\end{align}
+	\end{proof}
+
+	\begin{lemm}
+		\[
+			\sum_{i=1}^N i\parenthesed{N+1-i}\parenthesed{N+2-i}\parenthesed{N+3-i} = \frac{N^5 + 10N^4 + 35N^3 +50N^2 + 24N}{20}
+		\]
+	\end{lemm}
+	\begin{proof}
+		\begin{align*}
+			&\sum_{i=1}^N i\parenthesed{N+1-i}\parenthesed{N+2-i}\parenthesed{N+3-i} ={}\\
+			&=  \sum_{i=1}^N\squareparenthesed{-i^4 + \parenthesed{3N+6}i^3 - \parenthesed{3N^2+12N+11}i^2 + \parenthesed{N^3+6N^2+11N+6}i}={}\\
+			&= -\sum_{i=1}^N i^4 + \parenthesed{3N+6}\sum_{i=1}^N i^3 - \parenthesed{3N^2+12N+11}\sum_{i=1}^N i^2 + \parenthesed{N^3+6N^2+11N+6}\sum_{i=1}^Ni={}\\
+			&= -\frac{6N^5+15N^4+10N^3-N}{30} + \parenthesed{3N+6}\squareparenthesed{\frac{N\parenthesed{N+1}}2}^2 - {}\\
+			&\,\,\,\,\,\,\,- \parenthesed{3N^2+12N+11}\frac{2N^3+3N^2+N}6 + \parenthesed{N^3+6N^2+11N+6}\frac{N\parenthesed{N+1}}2 = {}\\
+			&= \frac{N^5}{20} + \frac{N^4}2 + \frac{7N^3}4 + \frac{5N^2}2 + \frac{6N}5 = {}\\
+			&= \frac{N^5 + 10N^4 + 35N^3 +50N^2 + 24N}{20}
+		\end{align*}
+	\end{proof}
+
+	\subsubsection{Négyzetek szummája, köböké\dots\ stb jellegű segédtételcsalád}
+
+	\begin{lemm}
+		\[
+			\sum_{i=1}^n i = \frac{\parenthesed{n+1}}2 = \frac{n^2+n}2
+		\]
+	\end{lemm}
+	\begin{proof}
+		Ld.~Gauß bizonyítását.
+	\end{proof}
+
+	\begin{lemm}
+		\[
+			\sum_{i=1}^n i^2 = \frac{2n^3+3n^2+n}6
+		\]
+	\end{lemm}
+	\begin{proof}
+		A polinom főegyütthatója (értéke $\frac13$) megsejthető a polinomok deriválási képletéből, pontosabban annak fordított jából, a primitív függvény képletéből.
+		A többi együtthatóra ez nem ad támpontot, de ha a ,,plauzibilis'', esztétikailag valószínűsítehetően szóbajövő racionális számok egy véges halmazán számítógéppel próbákat végzünk
+		\begin{align}
+			\forall n &\in \enumOf07:\\
+			\sum_{i=1}^n i^2 &= \frac{q_3n^3+q_2n^2+q_1n+q_0}6\\\intertext{ahol}
+			q_3, q_2, q_1, q_0 &\in \setAbs{\frac ab\in\mathbb Q}{a \in \enumOf0{12}, b \in \enumOf1{12}}
+		\end{align}
+		Ez véges sok (bár nagyon sok) próbálkozás,
+		a Haskell a fentiek alapján az alábbit adja
+		\begin{align*}
+			q_3 &:= \frac13\\
+			q_2 &:= \frac12\\
+			q_1 &:= \frac16\\
+			q_0 &:= 0\\\intertext{ami épp a}
+			\sum_{i=1}^n i^2 &= \frac{2n^3+3n^2+n}6\\\intertext{képlethez vezet.}
+		\end{align*}
+		Nem bizoníték, de ellenőrizzük kis mintán az egyezést:
+		\begin{table}[H]
+			\begin{tabular}{c|c|c||c}
+				$n$	&	$n^2$	&	$\sum$	&	$\frac{2n^3+3n^2+n}6$\\\hline\hline
+				0	&	0	&	0	&	0\\\hline
+				1	&	1	&	1	&	1\\\hline
+				2	&	4	&	5	&	5\\\hline
+				3	&	9	&	14	&	14\\\hline
+				4	&	16	&	30	&	30
+			\end{tabular}
+		\end{table}
+	\end{proof}
+
+	\begin{lemm}
+		\[
+			\sum_{i=1}^n i^3 = \frac{n^4+2n^3+n^2}4 = \squareparenthesed{\frac{n\parenthesed{n+1}}2}^2
+		\]
+	\end{lemm}
+	\begin{proof}
+		Mint az előbb, csak kicsit assabban talál rá a gép, mert nagyobb a keresési tér.
+		Ettől függetlenül másodpercek alatt elboldogul vele.
+		A jövőre készülősve lehet a keresőprogramot időre optimalizálni, stratégialilag is, és úgy is, hogy gépközeli kódra írjuk át:
+		\definecolor{bg}{rgb}{0.95,0.95,0.95}
+		\begin{minted}[bgcolor=bg, fontsize=\footnotesize, tabsize=4]{c}
+void sum3(void)
+{
+	printf("Sum of 3-powers\n");
+	for (int i3 = 0; i3 < N; i3++) {
+		for (int i2 = 0; i2 < N; i2++) {
+			for (int i1 = 0; i1 < N; i1++) {
+				bool flag = true;
+				for (int n = 0; n < 7 && flag; n++) {
+					int sum = 0;
+					for (int i = 1; i <= n; i++) {
+						sum += i * i * i;
+					}
+					float q4 = 1.0 / 4.0;
+					float q3 = (float)sample[i3].a / (float)sample[i3].b;
+					float q2 = (float)sample[i2].a / (float)sample[i2].b;
+					float q1 = (float)sample[i1].a / (float)sample[i1].b;
+					float q0 = 0.0;
+					float val = q4*n*n*n*n + q3*n*n*n + q2*n*n + q1*n + q0;
+					float d = val - (float)sum;
+					d = d >= 0 ? d : -d;
+					flag = flag && d < 0.01;
+				}
+				if (flag) {
+					printf("q4 = %d/%d\n", 1, 4);
+					printf("q3 = %d/%d\n", sample[i3].a, sample[i3].b);
+					printf("q2 = %d/%d\n", sample[i2].a, sample[i2].b);
+					printf("q1 = %d/%d\n", sample[i1].a, sample[i1].b);
+					printf("q0 = %d\n", 0);
+					printf("----------\n");
+				}
+			}
+		}
+	}
+}
+		\end{minted}
+		A kódoláson túl két matematikai, tartalmi jellegű optimalizálást használtunk:
+		\begin{itemize}
+			\item A polinomba képzeletben 0-t elyettesítve tudjuk, hogy a konstans tag szükségszerűen 0.
+			\item A főegyütthatóról nagyon erősen sejtjük, hogy $\frac15$, a primitív függvény és a határozatlan integrál számítási képletének analógiája alapján:
+			\[\int x^n dx = \frac{x^{n+1}}{n+1} + \text{const}\]
+		\end{itemize}
+	\end{proof}
+
+	\begin{lemm}
+		\[
+			\sum_{i=1}^n i^3 = \frac{n^4+2n^3+n^2}4 = \squareparenthesed{\frac{n\parenthesed{n+1}}2}^2
+		\]
+	\end{lemm}
+	\begin{proof}
+		Mint az előbb.
+	\end{proof}
+
+
+	\begin{lemm}
+		\[
+			\sum_{i=1}^n i^4 = \frac{6n^5+15n^4+10n^3-n}{30}
+		\]
+	\end{lemm}
+	\begin{proof}
+		Itt már \emph{nem} mint az előbb: túlságosan nagy a keresési tér.
+		A gép ettől függetlenül segíthet, de nem favágó módszerrel.
+		Félautomatizált megoldás viszont bevált: sima Excel táblában ,,illeszetttem rá'' a szummázos adatsorra a polinomos adatsort, az együtthatókkal kísérletezve.
+		Kell egy kis meggondolás hozzá, figyelni kell az eltérések előjelváltását és csökkenését, mintegyfajta ,,gradienses'' lemászást a hegyről.
+	\end{proof}
+
+	\section{Emlékezet nélküli változat}
+
+	A feladat egy módosított változatában feltételezzük, hogy a tolvaj ,,állapotmentes'', ,,nincs emlékezete'', és képes az általa már kirabolt embereket újra kirabolni.
+	Ez persze gész máseredményhez fog vezetni, de érdemes látni a régi fogalmakat új kihívásban.
 
 	\begin{figure}[H]
 		\caption*{Eseményfa $p = \frac{98}{98+2+2}$ értékével}
@@ -111,49 +657,13 @@
 		\end{equation}
 	\end{answer}
 
-	\subsection{Segédtétel}
-
-	A fentiek során azonban felhasználtunk egy segédtételt, nevezetesen:
-	\begin{lemm}
-		\begin{equation}
-			\sum_{i=0}^\infty ip^i = \frac p {\parenthesed{1-p}^2}
-		\end{equation}
-	\end{lemm}
-	\begin{proof}
-		\begin{align}
-			\sum_{i=0}^n ip^i &= \sum_{i=1}^n ip^i\\
-			\sum_{i=1}^n ip^i &= \sum_{i=1}^n p^i + \sum_{i=2}^n p^i + \sum_{i=3}^n p^i + \cdots + \sum_{i=n}^n p^i\\
-			\sum_{i=m}^n p^i        &= \sum_{i=0}^{n-m} p^{m+i} = p^m \sum_{i=0}^{n-m}p^i\\
-			\sum_{i=0}^{n-1}        &= \frac{p^n-1}{p-1}
-		\end{align}
-		\begin{align}
-			\sum_{i=0}^\infty ip^i &= \sum_{i=1}^\infty ip^i\\
-			\sum_{i=1}^\infty ip^i &= \sum_{i=1}^\infty p^i + \sum_{i=2}^\infty p^i + \sum_{i=3}^\infty p^i + \cdots\\
-			\sum_{i=m}^\infty p^i  &= \sum_{i=0}^\infty p^{m+i} = p^m\sum_{i=0}^\infty p_i\\
-			\sum_{i=0}^\infty      &= \frac1{1-p}
-		\end{align}
-		\begin{comment}
-			\begin{align}
-				\sum_{i=0}^\infty ip^i = \sum_{i=1}^\infty ip^i &= &  &    & &\sum_{i=1}^\infty p^i + {} &    &\sum_{i=2}^\infty p^i + {} &    &\sum_{i=3}^\infty p^i + \cdots\\
-							                        &= &  &p^1 & &\sum_{i=0}^\infty p^i + {} & p^2&\sum_{i=0}^\infty p^i + {} & p^3&\sum_{i=0}^\infty p^i + \cdots\\
-							                        &= & (&p^1 & &{}                    + {} & &p^2&{} + &p^3 + \cdots)\sum
-			\end{align}
-		\end{comment}
-		\begin{align}
-			\sum_{i=0}^\infty ip^i = \sum_{i=1}^\infty ip^i &= &    &\sum_{i=1}^\infty p^i + {} &    &\sum_{i=2}^\infty p^i + {} &    &\sum_{i=3}^\infty p^i + \cdots\\
-					                                &= & p^1&\sum_{i=0}^\infty p^i + {} & p^2&\sum_{i=0}^\infty p^i + {} & p^3&\sum_{i=0}^\infty p^i + \cdots
-		\end{align}
-		\begin{multline}
-			\sum_{i=0}^\infty ip^i = \parenthesed{p^1 + p^2 + \cdots}\sum_{i=0}^\infty p^i = \parenthesed{\sum_{i=1}^\infty p^i} \parenthesed{\sum_{i=0}^\infty p^i} = \parenthesed{p^1\sum_{i=0}^\infty p^i} \parenthesed{\sum_{i=0}^\infty p^i}=\\
-			= p\parenthesed{\sum_{i=0}^\infty p_i}^2 = p\parenthesed{\frac1{1-p}}^2 = \frac p{\parenthesed{1-p}^2}
-		\end{multline}
-	\end{proof}
 
 	\subsection{Tesztek, különböző függetlenségű modellek}
 
 	\subsubsection{Puszta numerikus ellenőrzési ,,modell''}
 
 	\paragraph{A fő tesztfüggvény} Haskell-részlet:
+
 
 	\definecolor{bg}{rgb}{0.95,0.95,0.95}
 	\begin{minted}[bgcolor=bg]{haskell}

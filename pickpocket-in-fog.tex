@@ -34,6 +34,17 @@
 \newcommand{\enumOf}[2]{\left\lbrace\,#1,\dots,#2\,\right\rbrace}
 \newcommand{\setAbs}[2]{\left\lbrace\,#1\,\middle|\,#2\,\right\rbrace}
 
+\usepackage{array}
+\usepackage[table]{xcolor}
+\newcommand{\blk}{\cellcolor{darkgray}}
+\newcommand{\gry}{\cellcolor{lightgray}}
+\newcommand{\red}{\cellcolor{red!33}}
+\newcommand{\grn}{\cellcolor{green!33}}
+\newcommand{\blu}{\cellcolor{blue!33}}
+\newcommand{\ylw}{\cellcolor{yellow}}
+\newcommand{\lyl}{\cellcolor{yellow!33}}
+\newcommand{\myl}{\cellcolor{yellow!55}}
+
 \author{Endrey Márk}
 \title{Ész Ventura\\102.~feladvány\\Zsebtolvaj a ködben}
 
@@ -84,7 +95,14 @@
 		E_{A,N} = \frac N{A+1}
 	\]
 
-	összefüggés eléggé meglepő egyszerűségi eredmény, főleg ha most előrebocsátom, milyen számolási modellek merülnek fel elsőre a legtermészetesebb módon.
+	összefüggés elég meglepő egyszerűségű, az ember ennél nehézkesebb összefüggésekre gondolna elsőnek.
+
+	Kis számpéldákra meg is nézhetjük rögtön.
+	Azt rögtön láthatjuk, hogy az $A=0$ esetre a dolog triviálisan igaz: ha nincs sem kapu, sem rendőr, akkor $E_{A=0;N} = N$, a tolvaj egyszerűen kifoszt mindenkit, majd, miután mindenkit kifosztott lesz, szükségszerűen leáll, hisz nincs már kit kifosztani.
+
+	Az $A=1$ esetén (egy ,,leállási objektum'', szóval kapu vagy rendőr jelenléte) a sejtés szerint a tolvaj az emberek felét fosztja ki átlagban: $E_{A=2;N} = \frac N2$. Képzeletben a tolvaj mintegy ,,megosztozik'' a leállási objektummal. Számszakilag nézve ugyanaz az eredmény, mintha kifosztana mindenkit, és megvesztegetve a rendőrt, átengedné neki a zsákmány felét!
+
+	Ez az összefüggés eléggé meglepő egyszerűségi eredmény, főleg ha most előrebocsátom, milyen ,,nyers erőre'' alapozó számításos próbálkozások merültek fel elsőre a legtermészetesebb módon.
 	Ezek ugyanis kissé elrejtik a lényeget, és eléggé bonyolultak!
 	Ennek szemléltetésére egy leegyszerűsített feladatverzióhoz tartozó számítást kivonatosan előre is bocsátok:
 
@@ -101,7 +119,7 @@
 		  &= \frac2{8\cdot7}\cdot\frac{6^3+3\cdot6^2+2\cdot6}6 = 2
 	\end{align*}
 
-	Bár számszakilag kijött a megelőlegzett $E_{A,N} = \frac N{A+1}$ egyenlőség a kokrét értékekre, de rejtve maradt bármiféle általános összefüggés.
+	Bár számszakilag kijött a megelőlegzett $E_{A,N} = \frac N{A+1}$ egyenlőség a konkrét értékekre, de rejtve maradt bármiféle általános összefüggés.
 
 	Még nagyobb gond, hogy a számítás során szerepelt egy \[6\cdot1 + 5\cdot2 + 4\cdot3 + 3\cdot2 + 2\cdot3 + 1\cdot6\] összeg is, szóval egy ilyen ,,tolódószorzatos'' összeg is, amelyre nehéz skalázható módon zárt képletet találni.
 	Bár egy érdekes tételcsalád (a ,,$\sum_{i=1}^n i^2$  ,,négyzetes'', a $\sum_{i=1}^n i^3$ ,,köbös'', \dots stb összegzési képletcsalád) segítségével felírhatóak zárt képletek az efféle tolódószorzatos összegekre is,
@@ -229,7 +247,7 @@
 	\]
 	megsejtéséig, ez nem lesz bizonyító erejű. A nyers számítások mégsem értelmetlenek teljesen:
 	például a hozzájuk tartozó ábrák --- az ,, \emph{eseményfák}'' --- sokat segítettek nekem a feladat megértésében,
-	maguk a numerikus eredmények pedig a ejtés felállításában.
+	maguk a numerikus eredmények pedig a sejtés felállításában.
 
 	Az eseményfákra próbálok általános sémát is mutatni, de főleg konkrét példák fognak szerepelni ,,kisebb'', ,,egyszerűsített'' feladatváltozatokra,
 	amelyek abban különböznek az eredeti ,,nagy''feladattól, hogy kevesebb rendőr és/vagy  kevesebb járókelő van.
@@ -372,13 +390,8 @@
 		\]
 	\end{conjecture}
 	\begin{proof}
-		Egyelőre forgalmam sincs!
-		Bár az eddigi eredmények engednek sejtést engendni erre a képletre, és a feltárt példákra igaz is, az általános összefüggést nem tudják bizonyítani.
-		Valószínűleg fontos meglátást, invariánsok felismerését mulasztottam el.
-
-		Ezzel együtt is, azt rögtön láthatjuk, hogy az $A=0$ esetre a dolog triviálisan igaz: ha nincs sem kapu, sem rendőr, akkor $E_{A=0;N} = N$, a tolvaj egyszerűen kifoszt mindenkit, majd, miután mindenkit kifosztott lesz, szükségszerűen leáll, hisz nincs már kit kifosztani.
-
-		Az $A=1$ esetén (egy leállási objektum van) a sejtés szerint a tolvaj az emberek felét fosztja ki átlagban: $E_{A=2;N} = \frac N2$. Képzeletben mintegy ,,megosztozik'' a leállási objektummal. Számszakilag nézve ugyanaz az eredmény, mintha kifosztana mindenkit, és megvesztegetve a rendőrt, átengedné neki a zsákmány felét!
+		Ez maga az a fő összefüggés, amit a korább említett kétféle sztochasztikus modell összevetésével próbáltam bizonyítani.
+		És most az is be lett mutatva, hogy a mélyebb meggondolás nélküli ,,nyers erővel'' végzett numerikus számítások csak megsejteni engedték az összefüggést, de megragadni nem tudták.
 	\end{proof}
 
 	\section{Függelék}
@@ -507,9 +520,9 @@
 		\]
 	\end{lemm}
 	\begin{proof}
-		Mint az előbb, csak kicsit assabban talál rá a gép, mert nagyobb a keresési tér.
+		Mint az előbb, csak kicsit lassabban talál rá a gép, mert nagyobb a keresési tér.
 		Ettől függetlenül másodpercek alatt elboldogul vele.
-		A jövőre készülősve lehet a keresőprogramot időre optimalizálni, stratégialilag is, és úgy is, hogy gépközeli kódra írjuk át:
+		A jövőre készülődve lehet a keresőprogramot idő szerint optimalizálni, illetve stratégialilag is javítani, és mindemellett akár gépközeli kódon is megírható a kereső algoritmus (pontosabban inkább heurisztika):
 		\definecolor{bg}{rgb}{0.95,0.95,0.95}
 		\begin{minted}[bgcolor=bg, fontsize=\footnotesize, tabsize=4]{c}
 void sum3(void)
@@ -571,16 +584,48 @@ void sum3(void)
 		\]
 	\end{lemm}
 	\begin{proof}
-		Itt már \emph{nem} mint az előbb: túlságosan nagy a keresési tér.
-		A gép ettől függetlenül segíthet, de nem favágó módszerrel.
-		Félautomatizált megoldás viszont bevált: sima Excel táblában ,,illeszetttem rá'' a szummázos adatsorra a polinomos adatsort, az együtthatókkal kísérletezve.
+		Itt már \emph{nem} mint az előbb: nem használhatunk gépet, túlságosan nagy a keresési tér, lassú.
+		A gép ettől függetlenül segített végül megtalálni a képletet, de nem favágó módszerrel.
+		Afféle ,,félautomatizált'' megoldás vált be: sima Excel táblában ,,illeszetttm rá'' a szummázos adatsorra a polinomos adatsort próbálkozással, az együtthatókkal kísérletezve.
+		Ha elég hosszú az Excel tábla példa-adatsora, ineraraktívan szépen megsejthető, mely irányban érdemes finomítani az együtthatókon, és éppen melyiket, hogy jobb illeszkedést kapjunk.
 		Kell egy kis meggondolás hozzá, figyelni kell az eltérések előjelváltását és csökkenését, mintegyfajta ,,gradienses'' lemászást a hegyről.
+
+		\setlength{\extrarowheight}{2px}
+		\begin{table}[H]
+			\caption*{Excel tábla: a $q_5, q_4, q_3, q_2, q_1, q_0 \in \mathbb Q$ együtthatók meghatározása\\a $\sum_{i=1}^ni^4 = q_5n^5+q_4n^4+q_3n^3+q_2n^2+q_1n^1+q_0n^0$ illesztése alapján}
+			\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|}
+				\hline
+				&&&&&&&&&\\\hline
+				&$\gry q_5$&\ylw $\frac15$&&&&&&&\\\hline
+				&$\gry q_4$&\ylw $\frac12$&&&&&&&\\\hline
+				&$\gry q_3$&\ylw $\frac13$&&&&&&&\\\hline
+				&$\gry q_2$&\ylw $0$&&&&&&&\\\hline
+				&$\gry q_1$&\ylw $-\frac1{30}$&&&&&&&\\\hline
+				&$\gry q_0$&\ylw $0$&&&&&&&\\\hline
+				&&&&&&&&&\\\hline
+				&&&&&&&&&\\\hline
+				&&&\gry $n$ &	 \gry $n^4$      &$\gry \sum_{i=1}^ni^4$& \gry $q_5n^5+q_4n^4+q_3n^3+q_2n^2+q_1n^1+q_0n^0$&\blu\bf KÜLÖNBÖZET  &                 &             \\\hline
+				&&&\lyl$0$ &\lyl     $0$      &\lyl       $0$       &\lyl       $0$&\myl$0$                                            &                 &             \\\hline
+				&&&\lyl$1$ &\lyl     $1$      &\lyl       $1$          &\lyl       $1$&\myl$0$                                         &                 &             \\\hline
+				&&&\lyl$2$ &\lyl    $16$      &\lyl      $17$           &\lyl      $17$&\myl$0$                                        &                 &             \\\hline
+				&&&\lyl$3$ &\lyl    $81$      &\lyl      $98$          &\lyl      $98$&\myl$0$                                         &                 &             \\\hline
+				&&&\lyl$4$ &\lyl   $256$      &\lyl     $354$          &\lyl     $354$&\myl$0$                                         &                 &             \\\hline
+				&&&\lyl$5$ &\lyl   $625$      &\lyl     $979$          &\lyl     $979$&\myl$0$                                         &                 &             \\\hline
+				&&&\lyl$6$ &\lyl  $1296$      &\lyl    $2275$         &\lyl    $2275$&\myl$0$                                          &                 &             \\\hline
+				&&&\lyl$7$ &\lyl  $2401$      &\lyl    $4676$         &\lyl    $4676$&\myl$0$                                          &                 &             \\\hline
+				&&&\lyl\vdots&\lyl\vdots      & \lyl\vdots         &    \lyl\vdots&\myl\vdots                                       &                 &             \\
+			\end{tabular}
+		\end{table}
+		\setlength{\extrarowheight}{0px}
 	\end{proof}
 
 	\section{Emlékezet nélküli változat}
 
-	A feladat egy módosított változatában feltételezzük, hogy a tolvaj ,,állapotmentes'', ,,nincs emlékezete'', és képes az általa már kirabolt embereket újra kirabolni.
-	Ez persze gész máseredményhez fog vezetni, de érdemes látni a régi fogalmakat új kihívásban.
+	Láttuk a feladat módosított, könnyített verzióit kisebb járokkelő- rendőr- és kapulétszámokra.
+	Most nézzünk egy olyan módostott feladatot, amely az eddigiketől eltérő módon könnyít a feladaton!
+
+	Most az legyen a feladat, hogy a tolvaj legyen ,,állapotmentes'', ne legyen ,,emlékezete'': legyen képes az általa már kirabolt embereket újra kirabolni.
+	Ez persze egészen más  eredményhez fog vezetni, de érdemes látni a régi fogalmakat új kihívásban.
 
 	\begin{figure}[H]
 		\caption*{Eseményfa $p = \frac{98}{98+2+2}$ értékével}
